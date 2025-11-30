@@ -1,27 +1,30 @@
-function displayBirthday() {
-   const name = document.getElementById('name').value;
-   const age = document.getElementById('age').value;
-   const dob = new Date(document.getElementById('dob').value);
-   const picture = document.getElementById('picture').files[0];
-
-   const reader = new FileReader();
-   reader.onload = function (e) {
-      document.getElementById('birthdayImage').src = e.target.result;
-   };
-   reader.readAsDataURL(picture);
-
-   document.getElementById('birthdayName').textContent = `Today is ${name}'s Birthday`;
-   document.getElementById('birthdayAge').textContent = `${age} years old`;
-   document.getElementById('birthdayDate').textContent = dob.toLocaleDateString();
-
-   document.getElementById('birthdayHeader').style.display = 'block';
-
-   const giftSections = document.querySelectorAll('.gift-section, .footer');
-   giftSections.forEach((section) => (section.style.display = 'block'));
-
-   document.querySelector('.form-container').style.display = 'none';
-
-   // Play the audio
+document.addEventListener('DOMContentLoaded', function() {
    const audio = document.getElementById('birthdayAudio');
-   audio.play();
-}
+   audio.play().catch(() => {
+      document.body.addEventListener('click', () => {
+         audio.play();
+      }, { once: true });
+   });
+
+   const photoUploadArea = document.getElementById('photoUploadArea');
+   const pictureInput = document.getElementById('pictureInput');
+   const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+   const birthdayImage = document.getElementById('birthdayImage');
+
+   photoUploadArea.addEventListener('click', function() {
+      pictureInput.click();
+   });
+
+   pictureInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+         const reader = new FileReader();
+         reader.onload = function(event) {
+            birthdayImage.src = event.target.result;
+            uploadPlaceholder.style.display = 'none';
+            birthdayImage.style.display = 'block';
+         };
+         reader.readAsDataURL(file);
+      }
+   });
+});
